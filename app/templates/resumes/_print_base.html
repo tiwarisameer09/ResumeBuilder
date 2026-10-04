@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.full_name if profile and profile.full_name else 'Resume' }} - {{ resume.target_role_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resume_print.css') }}">
+    <style>
+        /* Base Print Optimization */
+        @page {
+            size: A4;
+            margin: 12mm 14mm 12mm 14mm;
+        }
+
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .section-block, .page-break, .entry {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    </style>
+    {% block layout_styles %}{% endblock %}
+</head>
+<body>
+    {% block resume_content %}{% endblock %}
+</body>
+</html>

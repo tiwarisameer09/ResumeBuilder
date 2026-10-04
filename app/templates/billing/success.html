@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Payment Successful - ResumeBuilder Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 border border-gray-200 rounded-2xl shadow-sm text-center">
+    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4">
+        ✓
+    </div>
+    <h1 class="text-2xl font-black text-gray-900 mb-2">Payment Confirmed!</h1>
+    <p class="text-gray-600 text-sm mb-6">
+        Your access has been activated. You can now download and compile ATS-optimized PDFs in all 3 styles.
+    </p>
+
+    <div class="space-y-3">
+        {% if resume_id and style %}
+        <a href="{{ url_for('export.download_pdf', resume_id=resume_id, style=style) }}"
+            class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm shadow transition">
+            Download Your Resume PDF Now →
+        </a>
+        {% endif %}
+        <a href="{{ url_for('dashboard.index') }}"
+            class="block w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2.5 rounded-xl text-sm transition">
+            Go to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

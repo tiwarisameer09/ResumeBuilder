@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Export Access - ResumeBuilder Pro{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-6">
+    <div class="text-center mb-10">
+        <span class="bg-indigo-100 text-indigo-700 text-xs uppercase tracking-wider font-extrabold px-3 py-1 rounded-full">
+            PDF Export Gate
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-black text-gray-900 mt-3 tracking-tight">Unlock High-Resolution PDF Downloads</h1>
+        <p class="text-gray-600 mt-2 max-w-xl mx-auto text-sm">
+            Generate vector-crisp, ATS-parsable PDF exports formatted strictly to A4 pagination standards for all prospective roles.
+        </p>
+    </div>
+
+    <!-- Pricing Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        
+        <!-- Tier 1: Pro Lifetime (Recommended) -->
+        <div class="bg-white border-2 border-indigo-600 rounded-2xl p-7 shadow-md relative flex flex-col justify-between">
+            <div class="absolute -top-3.5 right-6 bg-indigo-600 text-white text-[11px] font-extrabold uppercase px-3 py-0.5 rounded-full tracking-wide">
+                Best Value
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">Pro Lifetime Pass</h2>
+                <p class="text-xs text-gray-500 mt-1">One-time payment. Forever access.</p>
+
+                <div class="mt-5 mb-6">
+                    <span class="text-4xl font-black text-gray-900">$9.99</span>
+                    <span class="text-xs text-gray-500 font-medium">/ lifetime</span>
+                </div>
+
+                <ul class="space-y-3 text-xs text-gray-600 border-t border-gray-100 pt-5">
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span><strong>Unlimited PDF exports</strong> for all prospective roles</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span>Access to Modern, Minimalist, & Executive styles</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span>Strict ATS compliant typography & vector rendering</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span>No recurring subscription or hidden fees</span>
+                    </li>
+                </ul>
+            </div>
+
+            <button type="button" onclick="initiateCheckout('lifetime')"
+                class="w-full mt-7 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm shadow transition">
+                Unlock Lifetime Access ($9.99)
+            </button>
+        </div>
+
+        <!-- Tier 2: 3 Export Credits -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-7 shadow-sm flex flex-col justify-between">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">3 Export Credits</h2>
+                <p class="text-xs text-gray-500 mt-1">Ideal for immediate urgent submissions.</p>
+
+                <div class="mt-5 mb-6">
+                    <span class="text-4xl font-black text-gray-900">$2.99</span>
+                    <span class="text-xs text-gray-500 font-medium">/ pack</span>
+                </div>
+
+                <ul class="space-y-3 text-xs text-gray-600 border-t border-gray-100 pt-5">
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span><strong>3 PDF downloads</strong> across any styles</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span>Full access to all 3 resume templates</span>
+                    </li>
+                    <li class="flex items-center space-x-2">
+                        <span class="text-emerald-500 font-bold">✓</span>
+                        <span>Credits never expire</span>
+                    </li>
+                </ul>
+            </div>
+
+            <button type="button" onclick="initiateCheckout('credits')"
+                class="w-full mt-7 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm transition">
+                Purchase 3 Credits ($2.99)
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Developer Testing Section -->
+    <div class="bg-slate-100 border border-slate-200 rounded-xl p-5 text-center">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Developer Testing Bypass</h3>
+        <p class="text-xs text-slate-500 mb-4">
+            Testing locally or haven't configured your Stripe test credentials yet? Click below to instantly grant test access.
+        </p>
+        <div class="flex justify-center space-x-3">
+            <form method="POST" action="{{ url_for('billing.dev_grant_access') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="lifetime">
+                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition">
+                    ⚡ Grant Dev Lifetime Access
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('billing.dev_grant_access') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="credits">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition">
+                    + Grant 3 Test Credits
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    async function initiateCheckout(plan) {
+        const csrfToken = "{{ csrf_token() }}";
+        const publishableKey = "{{ publishable_key }}";
+
+        try {
+            const res = await fetch("{{ url_for('billing.create_checkout_session') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ plan: plan })
+            });
+
+            const data = await res.json();
+            if (data.id) {
+                const stripe = Stripe(publishableKey);
+                stripe.redirectToCheckout({ sessionId: data.id });
+            } else if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert(data.error || "Checkout session initialization failed. You can use the Developer Testing Bypass button to test.");
+            }
+        } catch (err) {
+            console.error("Checkout error:", err);
+            alert("Error connecting to payment provider. You can use the Developer Testing Bypass button to test.");
+        }
+    }
+</script>
+{% endblock %}

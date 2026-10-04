@@ -1,0 +1,216 @@
+{% extends "resumes/_print_base.html" %}
+
+{% block layout_styles %}
+<style>
+    @page {
+        size: A4;
+        margin: 0; /* Modern uses full-bleed sidebar layout */
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        background: #ffffff;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    .sidebar {
+        width: 32%;
+        background: #1e293b;
+        color: #f8fafc;
+        padding: 28px 20px;
+        box-sizing: border-box;
+    }
+
+    .main {
+        width: 68%;
+        padding: 28px 24px;
+        box-sizing: border-box;
+        background: #ffffff;
+    }
+
+    h1 {
+        font-size: 24px;
+        font-weight: 800;
+        margin: 0 0 4px 0;
+        color: #0f172a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .role-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f766e;
+        margin-bottom: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .section-title {
+        font-size: 12px;
+        font-weight: 800;
+        border-bottom: 2px solid #0f766e;
+        padding-bottom: 4px;
+        margin: 16px 0 10px 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #0f172a;
+    }
+
+    .sidebar-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 4px;
+        margin: 18px 0 8px 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #5eead4;
+    }
+
+    .entry {
+        margin-bottom: 12px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .entry-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+        font-size: 12px;
+        color: #0f172a;
+    }
+
+    .entry-sub {
+        font-size: 11px;
+        color: #64748b;
+        margin-bottom: 4px;
+        font-style: italic;
+    }
+
+    ul {
+        margin: 4px 0 0 16px;
+        padding: 0;
+    }
+
+    li {
+        font-size: 10.5px;
+        line-height: 1.4;
+        margin-bottom: 3px;
+        color: #334155;
+    }
+
+    .contact-item {
+        font-size: 10px;
+        margin-bottom: 6px;
+        word-break: break-all;
+        color: #cbd5e1;
+    }
+
+    .skill-category {
+        font-weight: 700;
+        font-size: 10px;
+        color: #e2e8f0;
+        margin-top: 6px;
+    }
+
+    .skill-items {
+        font-size: 9.5px;
+        color: #94a3b8;
+        line-height: 1.35;
+    }
+</style>
+{% endblock %}
+
+{% block resume_content %}
+<div class="container">
+    <div class="sidebar">
+        <div style="font-size: 18px; font-weight: 800; margin-bottom: 16px; color: #ffffff;">
+            {{ profile.full_name if profile and profile.full_name else 'Your Name' }}
+        </div>
+
+        <div class="sidebar-section-title" style="margin-top: 0;">Contact</div>
+        <div class="contact-item">✉ {{ profile.email if profile else '' }}</div>
+        {% if profile and profile.phone %}<div class="contact-item">☎ {{ profile.phone }}</div>{% endif %}
+        {% if profile and profile.location %}<div class="contact-item">📍 {{ profile.location }}</div>{% endif %}
+        {% if profile and profile.linkedin_url %}<div class="contact-item">🔗 {{ profile.linkedin_url }}</div>{% endif %}
+        {% if profile and profile.github_url %}<div class="contact-item">💻 {{ profile.github_url }}</div>{% endif %}
+        {% if profile and profile.portfolio_url %}<div class="contact-item">🌐 {{ profile.portfolio_url }}</div>{% endif %}
+
+        {% if resume.educations or (profile and profile.educations) %}
+        <div class="sidebar-section-title">Education</div>
+        {% for edu in (resume.educations or profile.educations) %}
+        <div style="margin-bottom: 8px;">
+            <div style="font-size: 10px; font-weight: 700; color: #f1f5f9;">{{ edu.degree }}</div>
+            <div style="font-size: 9.5px; color: #cbd5e1;">{{ edu.institution }}</div>
+            <div style="font-size: 9px; color: #94a3b8;">{{ edu.graduation_year }} {% if edu.gpa %}• GPA: {{ edu.gpa }}{% endif %}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if resume.skills %}
+        <div class="sidebar-section-title">Skills</div>
+        {% for skill in resume.skills %}
+        <div class="skill-category">{{ skill.category }}</div>
+        <div class="skill-items">{{ skill.items }}</div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="main">
+        <h1>{{ profile.full_name if profile and profile.full_name else 'Your Name' }}</h1>
+        <div class="role-title">{{ resume.target_role_title }}</div>
+
+        {% if resume.summary %}
+        <div class="section-title">Professional Summary</div>
+        <p style="font-size: 10.5px; line-height: 1.45; margin: 0 0 12px 0; color: #334155;">{{ resume.summary }}</p>
+        {% endif %}
+
+        {% if resume.experiences %}
+        <div class="section-title">Experience</div>
+        {% for exp in resume.experiences %}
+        <div class="entry section-block">
+            <div class="entry-header">
+                <span>{{ exp.job_title }}</span>
+                <span style="font-size: 10px; color: #64748b;">{{ exp.start_date }} - {{ exp.end_date }}</span>
+            </div>
+            <div class="entry-sub">{{ exp.company }} {% if exp.location %}• {{ exp.location }}{% endif %}</div>
+            <ul>
+                {% for bullet in split_lines(exp.bullet_points) %}
+                <li>{{ bullet }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if resume.projects %}
+        <div class="section-title">Key Projects</div>
+        {% for proj in resume.projects %}
+        <div class="entry section-block">
+            <div class="entry-header">
+                <span>{{ proj.name }}</span>
+                {% if proj.technologies %}<span style="font-size: 9.5px; font-weight: 600; color: #0f766e;">[{{ proj.technologies }}]</span>{% endif %}
+            </div>
+            {% if proj.link %}
+            <div style="font-size: 9px; color: #64748b; margin-bottom: 2px;">{{ proj.link }}</div>
+            {% endif %}
+            <ul>
+                {% for bullet in split_lines(proj.bullet_points) %}
+                <li>{{ bullet }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

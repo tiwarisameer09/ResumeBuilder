@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Master Profile - ResumeBuilder{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <div class="bg-white p-8 border rounded-xl shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Master Academic & Contact Profile</h1>
+                <p class="text-gray-500 text-sm">Your immutable baseline credentials. These details feed into all tailored prospective job roles.</p>
+            </div>
+            <a href="{{ url_for('dashboard.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">← Back to Dashboard</a>
+        </div>
+
+        <form method="POST" action="{{ url_for('profile.edit_profile') }}">
+            {{ form.hidden_tag() }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    {{ form.full_name.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    {{ form.full_name(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none") }}
+                </div>
+                <div>
+                    {{ form.email.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    {{ form.email(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none") }}
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    {{ form.phone.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    {{ form.phone(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none", placeholder="+1 (555) 000-0000") }}
+                </div>
+                <div>
+                    {{ form.location.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                    {{ form.location(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none", placeholder="San Francisco, CA") }}
+                </div>
+            </div>
+            <div class="mb-4">
+                {{ form.linkedin_url.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                {{ form.linkedin_url(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none", placeholder="https://linkedin.com/in/username") }}
+            </div>
+            <div class="mb-4">
+                {{ form.github_url.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                {{ form.github_url(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none", placeholder="https://github.com/username") }}
+            </div>
+            <div class="mb-6">
+                {{ form.portfolio_url.label(class="block text-sm font-medium text-gray-700 mb-1") }}
+                {{ form.portfolio_url(class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none", placeholder="https://yourportfolio.dev") }}
+            </div>
+            {{ form.submit(class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold cursor-pointer hover:bg-indigo-700 transition") }}
+        </form>
+    </div>
+
+    <!-- Master Academic Education Records -->
+    <div class="bg-white p-8 border rounded-xl shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">Baseline Academic Degrees</h2>
+                <p class="text-sm text-gray-500">Degree credentials associated with your master profile.</p>
+            </div>
+            <a href="{{ url_for('profile.add_master_education') }}" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3.5 py-1.5 rounded-lg text-sm font-semibold transition">+ Add Education</a>
+        </div>
+
+        <div class="space-y-3 mt-4">
+            {% if profile and profile.educations %}
+                {% for edu in profile.educations %}
+                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-sm">{{ edu.degree }}{% if edu.field_of_study %} in {{ edu.field_of_study }}{% endif %}</h3>
+                        <p class="text-xs text-gray-600">{{ edu.institution }} • Class of {{ edu.graduation_year }} {% if edu.gpa %}• GPA: {{ edu.gpa }}{% endif %}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-xs text-gray-400 italic">No master academic degrees added yet. You can also add role-specific degrees inside each tailored resume.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Prospective Roles & Resumes{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <!-- Header with Action -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Prospective Roles & Resumes</h1>
+            <p class="text-gray-600 text-sm mt-1">Tailor distinct resumes with targeted experience bullets for every prospective job role.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('roles.create_role') }}"
+                class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg shadow-sm hover:bg-indigo-700 font-semibold text-sm transition flex items-center space-x-1.5">
+                <span>+</span>
+                <span>Add Prospective Role</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Master Profile Card -->
+    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-xl p-6 text-white shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <div class="text-xs uppercase tracking-wider text-indigo-300 font-bold mb-1">Baseline Profile</div>
+            <h2 class="text-xl font-bold">{{ profile.full_name if profile and profile.full_name else 'Your Name' }}</h2>
+            <p class="text-xs text-slate-300 mt-1">
+                {{ profile.email }} 
+                {% if profile and profile.phone %}• {{ profile.phone }}{% endif %}
+                {% if profile and profile.location %}• {{ profile.location }}{% endif %}
+            </p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('profile.edit_profile') }}"
+                class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-4 py-2 rounded-lg border border-white/20 transition">
+                Edit Master Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Roles Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for resume in resumes %}
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col justify-between card-hover">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="inline-block px-2.5 py-1 text-xs font-bold rounded-md bg-indigo-50 text-indigo-700 uppercase tracking-wide">
+                        {{ resume.selected_style }} Style
+                    </span>
+                    {% if resume.target_industry %}
+                    <span class="inline-block px-2 py-0.5 text-xs font-medium rounded text-gray-500 bg-gray-100">
+                        {{ resume.target_industry }}
+                    </span>
+                    {% endif %}
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-1.5">{{ resume.target_role_title }}</h3>
+                <p class="text-gray-500 text-xs mb-4 line-clamp-3 leading-relaxed">
+                    {{ resume.summary or "No tailored professional summary configured yet." }}
+                </p>
+
+                <!-- Stats Snippet -->
+                <div class="flex items-center space-x-3 text-xs text-gray-400 mb-4 pb-3 border-b border-gray-100">
+                    <span>{{ resume.experiences|length }} Exps</span>
+                    <span>•</span>
+                    <span>{{ resume.projects|length }} Projects</span>
+                    <span>•</span>
+                    <span>{{ resume.skills|length }} Skill Grps</span>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-2">
+                <a href="{{ url_for('resume.editor', resume_id=resume.id) }}"
+                    class="block text-center w-full bg-slate-900 text-white py-2 rounded-lg hover:bg-slate-800 text-xs font-bold transition">
+                    Open Editor Workspace →
+                </a>
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{{ url_for('export.preview_html', resume_id=resume.id, style=resume.selected_style) }}"
+                        target="_blank"
+                        class="block text-center border border-gray-300 text-gray-700 py-1.5 rounded-lg hover:bg-gray-50 text-xs font-semibold transition">
+                        Preview HTML
+                    </a>
+                    <a href="{{ url_for('export.download_pdf', resume_id=resume.id, style=resume.selected_style) }}"
+                        class="block text-center bg-indigo-600 text-white py-1.5 rounded-lg hover:bg-indigo-700 text-xs font-semibold transition">
+                        Export PDF
+                    </a>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                    <a href="{{ url_for('roles.edit_role', role_id=resume.id) }}" class="text-xs text-gray-500 hover:text-indigo-600 font-medium">Edit Details</a>
+                    <form method="POST" action="{{ url_for('roles.delete_role', role_id=resume.id) }}" class="delete-form inline" data-confirm="Delete prospective role '{{ resume.target_role_title }}'? All tailored entries will be removed.">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="text-xs text-red-500 hover:text-red-700 font-medium">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full bg-white p-12 text-center rounded-xl border border-dashed border-gray-300">
+            <div class="w-12 h-12 mx-auto mb-4 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xl font-bold">
+                +
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-1">No prospective roles configured yet</h3>
+            <p class="text-gray-500 text-sm max-w-md mx-auto mb-6">
+                Start by creating a tailored target job role (e.g. Frontend Engineer, ML Researcher, Product Manager) to begin crafting role-specific accomplishments.
+            </p>
+            <a href="{{ url_for('roles.create_role') }}"
+                class="inline-block bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 shadow-sm transition">
+                Create First Prospective Role
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

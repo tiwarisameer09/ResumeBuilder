@@ -1,0 +1,28 @@
+/* static/css/resume_print.css */
+@page {
+    size: A4;
+    margin: 12mm 14mm 12mm 14mm;
+}
+
+@media print {
+    html, body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .section-block,
+    .page-break,
+    .entry {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+.section-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
